@@ -1,12 +1,13 @@
 import pygame
 
 pygame.init()
-screen = pygame.display.set_mode((500, 500))
+screen = pygame.display.set_mode((700, 700))
 clock = pygame.time.Clock()
 running = True
-dt = 0
 
-player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
+snake_x = 20
+snake_y = 20
+
 
 while running:
     for event in pygame.event.get():
@@ -15,23 +16,20 @@ while running:
 
     screen.fill("purple")
 
-    pygame.draw.circle(screen, "red", player_pos, 40)
+    pygame.draw.rect(screen, "black",(snake_x,snake_y,50,50))
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_w]:
-        player_pos.y -= 300 * dt
+        snake_y -= 10
     if keys[pygame.K_s]:
-        player_pos.y += 300 * dt
+        snake_y += 10 
     if keys[pygame.K_a]:
-        player_pos.x -= 300 * dt
+        snake_x -= 10 
     if keys[pygame.K_d]:
-        player_pos.x += 300 * dt
+        snake_x += 10 
 
     pygame.display.flip()
 
-    # limits FPS to 60
-    # dt is delta time in seconds since last frame, used for framerate-
-    # independent physics.
-    dt = clock.tick(60) / 1000
+    clock.tick(60)
 
 pygame.quit()
