@@ -1,32 +1,42 @@
 import pygame
 
 pygame.init()
+
+GRID_SIZE = 20
+
 screen = pygame.display.set_mode((700, 700))
 clock = pygame.time.Clock()
 running = True
-
-snake_x = 20
-snake_y = 20
-
+dx = 0
+dy = 0
+snakeBody = []
+snake = pygame.Rect(screen.get_width()/2,screen.get_height()/2,GRID_SIZE,GRID_SIZE)
+snakeBody.append(snake)
+def move_snake():
+    snakeBody[0].move_ip(dx,dy)
 
 while running:
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP or event.key == pygame.K_w:
-                snake_y -= 10
+                dx = 0
+                dy = -GRID_SIZE
             elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                snake_y += 10
+                dx = 0
+                dy = GRID_SIZE
             elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                snake_x -=10
+                dx = -GRID_SIZE
+                dy = 0
             elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                snake_x +=10
-    screen.fill("purple")
-
-    pygame.draw.rect(screen, "black",(snake_x,snake_y,50,50))
+                dx = GRID_SIZE
+                dy = 0
+    screen.fill((32, 38, 51))
+    for segment in snakeBody:
+        pygame.draw.rect(screen,"green", segment)
+    move_snake()
     pygame.display.flip()
-
-    clock.tick(60)
-
+    clock.tick(10)
 pygame.quit()
