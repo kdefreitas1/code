@@ -1,4 +1,5 @@
 import pygame
+import random
 
 pygame.init()
 
@@ -9,14 +10,13 @@ clock = pygame.time.Clock()
 running = True
 dx = 0
 dy = 0
-snakeBody = []
-snake = pygame.Rect(screen.get_width()/2,screen.get_height()/2,GRID_SIZE,GRID_SIZE)
-snakeBody.append(snake)
+snakeBody = [pygame.Rect(360,360,GRID_SIZE,GRID_SIZE)]
+apple = pygame.Rect(random.randint(0, int((screen.get_width()-GRID_SIZE)/GRID_SIZE))*GRID_SIZE,random.randint(0, int((screen.get_height()-GRID_SIZE)/GRID_SIZE))*GRID_SIZE,GRID_SIZE,GRID_SIZE)
+
 def move_snake():
     snakeBody[0].move_ip(dx,dy)
 
 while running:
-    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -33,9 +33,22 @@ while running:
             elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                 dx = GRID_SIZE
                 dy = 0
-    screen.fill((32, 38, 51))
+
+    screen.fill((32, 38, 51)) # fills background with color
+    pygame.draw.rect(screen, "red", apple) # draws apple
+
+    # draws snake
     for segment in snakeBody:
         pygame.draw.rect(screen,"green", segment)
+
+    # draws vertical lines for grid
+    for i in range(0, screen.get_width(), GRID_SIZE):
+        pygame.draw.line(screen, "black", (i, 0), (i, screen.get_height()))
+        
+    # draws horizontal liens for grid
+    for i in range(0, screen.get_height(), GRID_SIZE):
+        pygame.draw.line(screen, "black", (0, i), (screen.get_height(), i))
+
     move_snake()
     pygame.display.flip()
     clock.tick(10)
