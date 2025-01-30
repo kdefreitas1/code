@@ -1,3 +1,4 @@
+# file from assignment; its purpose is to find what college type has the highest average salary
 import pandas as pd
 
 data = pd.read_csv (r"college data.csv")
