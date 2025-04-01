@@ -11,26 +11,30 @@ clock = pygame.time.Clock()
 running = True
 dx = 0
 dy = 0
+direction = ""
 snake_body = [pygame.Rect(360,360,GRID_SIZE,GRID_SIZE)]
 apple = pygame.Rect(random.randint(0, (screen.get_width()-GRID_SIZE)//GRID_SIZE)*GRID_SIZE,random.randint(0, int((screen.get_height()-GRID_SIZE)/GRID_SIZE))*GRID_SIZE,GRID_SIZE,GRID_SIZE)
 check_apple = False # for checking if apple was collected to make sure when checking for self collision the new body being added deosnt mess with it
-num_apples = 0 
+num_apples = 0
+game_over = False
 
 # for when the game ends
 def end_game():
+    global game_over
     # removes grid
     pygame.draw.line(screen, (32, 38, 51), (0, 0), (screen.get_width(), screen.get_height()), width=2000)
 
     apple.update(0,0,0,0)
 
-    game_over_font = pygame.font.SysFont("Times New Roman", 50)
+    game_over_font = pygame.font.SysFont("Times New Roman", 90)
     game_over_text = game_over_font.render("Game Over", True, "green")
-    screen.blit(game_over_text, (screen.get_width()/2,screen.get_height()/2))
+    screen.blit(game_over_text, (screen.get_width()/2-200,screen.get_height()/4))
 
-    score_font = pygame.font.SysFont("Times New Roman", 20)
+    score_font = pygame.font.SysFont("Times New Roman", 30)
     score_text = score_font.render("Apples Collected: " + str(num_apples), True, "red")
-    screen.blit(score_text, (screen.get_width()/2, screen.get_height()/3))
+    screen.blit(score_text, (screen.get_width()/2-100, screen.get_height()/2.5))
 
+    game_over = True
 # checks for collisions 
 def check_collisions():
     global check_apple, num_apples
@@ -65,18 +69,27 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
-            if (event.key == pygame.K_UP or event.key == pygame.K_w) and dy != GRID_SIZE:
-                dx = 0
-                dy = -GRID_SIZE
-            elif (event.key == pygame.K_DOWN or event.key == pygame.K_s) and dy != -GRID_SIZE:
-                dx = 0
-                dy = GRID_SIZE
-            elif (event.key == pygame.K_LEFT or event.key == pygame.K_a) and dx != GRID_SIZE:
-                dx = -GRID_SIZE
-                dy = 0
-            elif (event.key == pygame.K_RIGHT or event.key == pygame.K_d) and dx != -GRID_SIZE:
-                dx = GRID_SIZE
-                dy = 0
+            if (event.key == pygame.K_UP or event.key == pygame.K_w):
+                direction = "up"
+            elif (event.key == pygame.K_DOWN or event.key == pygame.K_s):
+                direction = "down"
+            elif (event.key == pygame.K_LEFT or event.key == pygame.K_a):
+                direction = "left"
+            elif (event.key == pygame.K_RIGHT or event.key == pygame.K_d):
+                direction = "right"
+    # this section is to make sure simultaneous inputs are not happening
+    if direction == "up" and dy != GRID_SIZE:
+        dx = 0
+        dy = -GRID_SIZE
+    elif direction == "down" and dy != -GRID_SIZE:
+        dx = 0
+        dy = GRID_SIZE
+    elif direction == "left" and dx != GRID_SIZE:
+        dx = -GRID_SIZE
+        dy = 0
+    elif direction == "right" and dx != -GRID_SIZE:
+        dx = GRID_SIZE
+        dy = 0
 
     screen.fill((32, 38, 51)) # fills background with color
     pygame.draw.rect(screen, "red", apple) # draws apple
@@ -95,5 +108,11 @@ while running:
 
     move_snake()
     pygame.display.flip()
-    clock.tick(8)
+    clock.tick(10)
+    # this keeps the end display while also not contuining the game
+    while game_over:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                game_over = False
 pygame.quit()
